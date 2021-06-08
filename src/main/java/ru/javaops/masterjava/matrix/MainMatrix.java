@@ -20,6 +20,7 @@ public class MainMatrix {
 
         double singleThreadSum = 0.;
         double concurrentThreadSum = 0.;
+        double concurrentForkJoinThreadSum = 0.;
         int count = 1;
         while (count < 6) {
             System.out.println("Pass " + count);
@@ -35,7 +36,14 @@ public class MainMatrix {
             out("Concurrent thread time, sec: %.3f", duration);
             concurrentThreadSum += duration;
 
-            if (!MatrixUtil.compare(matrixC, concurrentMatrixC)) {
+
+            start = System.currentTimeMillis();
+            final int[][] concurrentForkJoinMatrixC = MatrixUtil.concurrentMultiplyForkJoin(matrixA, matrixB);
+            duration = (System.currentTimeMillis() - start) / 1000.;
+            out("Concurrent ForkJoin thread time, sec: %.3f", duration);
+            concurrentForkJoinThreadSum += duration;
+
+            if (!MatrixUtil.compare(matrixC, concurrentMatrixC) && !MatrixUtil.compare(matrixC, concurrentForkJoinMatrixC)) {
                 System.err.println("Comparison failed");
                 break;
             }
@@ -44,6 +52,7 @@ public class MainMatrix {
         executor.shutdown();
         out("\nAverage single thread time, sec: %.3f", singleThreadSum / 5.);
         out("Average concurrent thread time, sec: %.3f", concurrentThreadSum / 5.);
+        out("Average concurrent ForkJoin thread time, sec: %.3f", concurrentThreadSum / 5.);
     }
 
     private static void out(String format, double ms) {

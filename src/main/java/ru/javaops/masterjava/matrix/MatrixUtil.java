@@ -1,8 +1,9 @@
 package ru.javaops.masterjava.matrix;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.*;
 
 /**
  * gkislin
@@ -14,6 +15,74 @@ public class MatrixUtil {
     public static int[][] concurrentMultiply(int[][] matrixA, int[][] matrixB, ExecutorService executor) throws InterruptedException, ExecutionException {
         final int matrixSize = matrixA.length;
         final int[][] matrixC = new int[matrixSize][matrixSize];
+
+        List<Callable<Integer>> callables = new ArrayList<>();
+
+        for (int i = 0; i < matrixSize; i++) {
+            int finalI = i;
+
+            Callable<Integer> callable = () -> {
+                int[] matrixBColumn = new int[matrixSize];
+
+                for (int k = 0; k < matrixSize; k++) {
+                    matrixBColumn[k] = matrixB[k][finalI];
+                }
+
+                for (int j = 0; j < matrixSize; j++) {
+                    int[] matrixARow = matrixA[j];
+                    int sum = 0;
+                    for (int k = 0; k < matrixSize; k++) {
+                        sum += matrixBColumn[k] * matrixARow[k];
+                    }
+                    matrixC[finalI][j] = sum;
+                }
+                return null;
+            };
+
+            callables.add(callable);
+
+        }
+
+        executor.invokeAll(callables);
+
+        return matrixC;
+    }
+
+    //TODO ForkJoin
+    public static int[][] concurrentMultiplyForkJoin(int[][] matrixA, int[][] matrixB) throws InterruptedException, ExecutionException {
+        final int matrixSize = matrixA.length;
+        final int[][] matrixC = new int[matrixSize][matrixSize];
+
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+
+        List<ForkJoinTask<?>> tasks = new ArrayList<>();
+
+        for (int i = 0; i < matrixSize; i++) {
+            int finalI = i;
+
+            ForkJoinTask<?> forkJoinTask = forkJoinPool.submit(() -> {
+                int[] matrixBColumn = new int[matrixSize];
+
+                for (int k = 0; k < matrixSize; k++) {
+                    matrixBColumn[k] = matrixB[k][finalI];
+                }
+
+                for (int j = 0; j < matrixSize; j++) {
+                    int[] matrixARow = matrixA[j];
+                    int sum = 0;
+                    for (int k = 0; k < matrixSize; k++) {
+                        sum += matrixBColumn[k] * matrixARow[k];
+                    }
+                    matrixC[finalI][j] = sum;
+                }
+            });
+
+            tasks.add(forkJoinTask);
+        }
+
+        for (ForkJoinTask<?> task : tasks) {
+            task.join();
+        }
 
         return matrixC;
     }
@@ -40,6 +109,7 @@ public class MatrixUtil {
                 matrixC[i][j] = sum;
             }
         }
+
         return matrixC;
     }
 
