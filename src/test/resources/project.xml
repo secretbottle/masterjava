@@ -1,0 +1,15 @@
+<Project xmlns="http://javaops.ru">
+    <name>masterjava</name>
+    <description>Master Java project</description>
+    <Groups>
+        <Group type="FINISHED">
+            <name>masterjava02</name>
+        </Group>
+        <Group type="REGISTERING">
+            <name>masterjava03</name>
+        </Group>
+        <Group type="CURRENT">
+            <name>masterjava04</name>
+        </Group>
+    </Groups>
+</Project>
