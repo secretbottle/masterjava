@@ -6,7 +6,7 @@
             <fullName>Full Name</fullName>
             <Groups>
                 <Group type="FINISHED">
-                    <name>topjava02</name>
+                    <name>masterjava02</name>
                 </Group>
             </Groups>
         </User>
@@ -14,7 +14,7 @@
             <fullName>Admin</fullName>
             <Groups>
                 <Group type="FINISHED">
-                    <name>masterjava02</name>
+                    <name>topjava02</name>
                 </Group>
                 <Group type="FINISHED">
                     <name>topjava03</name>
